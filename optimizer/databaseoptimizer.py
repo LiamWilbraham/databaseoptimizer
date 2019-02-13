@@ -7,6 +7,31 @@ from rdkit import DataStructs
 
 
 class DatabaseOptimizer:
+    '''
+    Class for obtaining maximally diverse subsets of molecules from large
+    databases of SMILES strings
+
+    Arguments:
+        smiles_list: (list)
+            A list of SMILES strings that form the database from which a
+            maxmimally diverse subset is to be derived
+
+        desired_library_size: (int)
+            The desired size of the subset
+
+        fp_rad: (int, default=2)
+            The radius used to construct Morgan fingerprints, used to assess
+            molecular similarity
+
+        fp_bits: (int, default=1024)
+            The length of the bit vectors of the Morgan fingerprints, used
+            to assess molecular similarity
+
+    Methods:
+        optimize:
+            Performs the algorithm and obtains the maximally diverse subset
+            of SMILES strings
+    '''
 
     def __init__(self,
                  smiles_list,
@@ -26,6 +51,7 @@ class DatabaseOptimizer:
 
 
     def optimize(self):
+
         index = randint(0, self.n_molecules)
         self.update_subsets(index)
         self.optimized_library.append(smiles_list[index])
@@ -40,6 +66,9 @@ class DatabaseOptimizer:
             if n % 500 == 0:
                 print('{} molecules added to library'.format(n))
             n += 1
+
+        with open('optimized_library.csv', 'w') as f:
+            [f.write(smi+'\n') for smi in self.optimized_library]
 
 
     def update_subsets(self, index):
